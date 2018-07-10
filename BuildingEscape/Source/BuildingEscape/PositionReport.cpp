@@ -23,9 +23,9 @@ void UPositionReport::BeginPlay()
 
 	// Aca va mi codigo:
 	FString ObjectName = GetOwner()->GetName();
-	FVector ActorPosVector = GetOwner()->GetActorLocation();
+	FVector ActorPositionVector = GetOwner()->GetActorLocation();
 
-	UE_LOG(LogTemp, Warning, TEXT("%s is at %s"), *ObjectName, *ActorPosVector.ToString());
+	UE_LOG(LogTemp, Warning, TEXT("%s is at %s"), *ObjectName, *ActorPositionVector.ToString());
 	
 }
 
