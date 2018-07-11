@@ -4,6 +4,9 @@
 
 #include "CoreMinimal.h"
 #include "Components/ActorComponent.h"
+#include "Gameframework/Actor.h"
+
+//siempre el ultimo include!
 #include "PositionReport.generated.h"
 
 
