@@ -18,7 +18,10 @@ UOpenDoor::UOpenDoor()
 void UOpenDoor::BeginPlay()
 {
 	Super::BeginPlay();
+}
 
+void UOpenDoor::OpenDoor()
+{
 	// Mi codigo
 	AActor* Owner = GetOwner();
 
@@ -28,9 +31,7 @@ void UOpenDoor::BeginPlay()
 	// cambiar la rotacion
 	Owner->SetActorRotation(NewRotation);
 
-	
 	UE_LOG(LogTemp, Warning, TEXT("%s is %s rotated open"), *Owner->GetName(), *Owner->GetActorRotation().ToString());
-	
 }
 
 
@@ -39,6 +40,12 @@ void UOpenDoor::TickComponent(float DeltaTime, ELevelTick TickType, FActorCompon
 {
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
 
-	// ...
+	// chequeamos el trigger volume en cada frame
+	// si ActorThatOpens esta dentro del trigger volume
+	if (PressurePlate->IsOverlappingActor(ActorThatOpens))	//TODO Asociar ActorThatOpens a OpenDoor en Unreal Engine
+	{
+		OpenDoor();
+	}
+		
 }
 
