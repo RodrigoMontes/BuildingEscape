@@ -6,6 +6,7 @@
 #include "Components/ActorComponent.h"
 #include "Gameframework/Actor.h"
 #include "Engine/TriggerVolume.h"
+#include "Engine/World.h"
 
 //siempre el ultimo include!
 #include "OpenDoor.generated.h"
@@ -25,19 +26,24 @@ protected:
 	virtual void BeginPlay() override;
 
 	void OpenDoor();
+	void CloseDoor();
 
 public:	
 	// Called every frame
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
 
 private:
-	UPROPERTY(VisibleAnywhere)
-		float OpenAngle = 70.0f;
+	//UPROPERTY(VisibleAnywhere)	// no es editable
+	UPROPERTY(EditAnywhere)			// es editable
+		float OpenAngle = 75.0f;
 
 	UPROPERTY(EditAnywhere)
 		ATriggerVolume* PressurePlate;
 
 	UPROPERTY(EditAnywhere)
-		AActor* ActorThatOpens;
-	
+		float OpenDoorWaitTime = 0.2f;
+
+	AActor* ActorThatOpens;
+	AActor* Owner;
+	float LastTimeDoorOpen;
 };

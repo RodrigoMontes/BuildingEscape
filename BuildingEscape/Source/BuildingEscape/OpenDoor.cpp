@@ -18,20 +18,22 @@ UOpenDoor::UOpenDoor()
 void UOpenDoor::BeginPlay()
 {
 	Super::BeginPlay();
+
+	// busca top down el pawn (player), desde el mundo, al controlador, al player
+	ActorThatOpens = GetWorld()->GetFirstPlayerController()->GetPawn();
+	Owner = GetOwner();
 }
 
 void UOpenDoor::OpenDoor()
 {
-	// Mi codigo
-	AActor* Owner = GetOwner();
+	// cambiar la rotacion para abrir la puerta
+	Owner->SetActorRotation(FRotator(0.0f, OpenAngle, 0.0f));
+}
 
-	// crear un rotador (rotator)
-	FRotator NewRotation = FRotator(0.0f, 60.0f, 0.0f);
-
-	// cambiar la rotacion
-	Owner->SetActorRotation(NewRotation);
-
-	UE_LOG(LogTemp, Warning, TEXT("%s is %s rotated open"), *Owner->GetName(), *Owner->GetActorRotation().ToString());
+void UOpenDoor::CloseDoor()
+{
+	// cambiar la rotacion para cerrar la puerta
+	Owner->SetActorRotation(FRotator(0.0f, 0.0f, 0.0f));
 }
 
 
@@ -42,10 +44,17 @@ void UOpenDoor::TickComponent(float DeltaTime, ELevelTick TickType, FActorCompon
 
 	// chequeamos el trigger volume en cada frame
 	// si ActorThatOpens esta dentro del trigger volume
-	if (PressurePlate->IsOverlappingActor(ActorThatOpens))	//TODO Asociar ActorThatOpens a OpenDoor en Unreal Engine
+	if (PressurePlate->IsOverlappingActor(ActorThatOpens))
 	{
 		OpenDoor();
+		LastTimeDoorOpen = GetWorld()->GetTimeSeconds();
 	}
-		
+
+	if ((GetWorld()->GetTimeSeconds() - LastTimeDoorOpen) > OpenDoorWaitTime)
+	{
+		LastTimeDoorOpen = 0;
+		CloseDoor();
+	}
+
 }
 

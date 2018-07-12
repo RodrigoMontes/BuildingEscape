@@ -1,4 +1,4 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+// Rodrigo Montes 2018
 
 #include "PositionReport.h"
 
@@ -24,6 +24,7 @@ void UPositionReport::BeginPlay()
 	FString ObjectName = GetOwner()->GetName();
 	FVector ActorPositionVector = GetOwner()->GetActorLocation();
 
+	// muestra log en pantalla
 	UE_LOG(LogTemp, Warning, TEXT("%s is at %s"), *ObjectName, *ActorPositionVector.ToString());
 	
 }
