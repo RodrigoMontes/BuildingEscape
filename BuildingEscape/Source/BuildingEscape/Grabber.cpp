@@ -53,7 +53,25 @@ void UGrabber::TickComponent(float DeltaTime, ELevelTick TickType, FActorCompone
 		1.0f
 	);
 
-	//UE_LOG(LogTemp, Warning, TEXT("Player at %s with %s rotation"), 
-	//	*PlayerViewPortLocation.ToString(), *PlayerViewPortRotation.ToString());
+	/// line trace (ray-casting) para detectar objetos
+	FHitResult LineTraceHit;
+	FCollisionQueryParams TraceParameters(FName(TEXT("")), false, GetOwner());
+
+	GetWorld()->LineTraceSingleByObjectType(
+		OUT LineTraceHit,
+		PlayerViewPortLocation,
+		LineTraceEnd,
+		FCollisionObjectQueryParams(ECollisionChannel::ECC_PhysicsBody),
+		TraceParameters
+	);
+
+	/// mostrar lo que colisionamos con el codigo anterior
+	AActor* ActorHit = LineTraceHit.GetActor();
+
+	if (ActorHit)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("actor: %s"), *(ActorHit->GetName()));
+	}
+	
 }
 
