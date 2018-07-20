@@ -31,6 +31,22 @@ void UGrabber::BeginPlay()
 void UGrabber::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)
 {
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
+
+	/// Funcion getter que obtiene la posicion y rotacion del player
+	/// notar que modifica los parametros que le pasemos, en este caso un FVector y un FRotator
+	GetWorld()->GetFirstPlayerController()->GetPlayerViewPoint(
+		OUT PlayerViewPortLocation,
+		OUT PlayerViewPortRotation);
+
+	/// Calculate the end point of our reach line
+	LineTraceEnd = PlayerViewPortLocation + (PlayerViewPortRotation.Vector() * Reach);
+
+	/// if we grab something
+	if (PhysicsHandle->GetGrabbedComponent())
+	{
+		/// we move the object with the player
+		PhysicsHandle->SetTargetLocation(LineTraceEnd);
+	}		
 }
 
 
@@ -40,7 +56,21 @@ void UGrabber::Grab()
 	UE_LOG(LogTemp, Warning, TEXT("Grab key pressed"));
 
 	/// Line trace and see if we reach actors with physics body collision channel set
-	GetFirstPhysicsBodyInReach();
+	auto HitResult = GetFirstPhysicsBodyInReach();
+	auto ComponentToGrab = HitResult.GetComponent();
+
+	// only if we hit an actor with physics body while pressing the grab key
+	if (HitResult.GetActor())
+	{
+		// attach physics handle to actor with physics body
+		PhysicsHandle->GrabComponent(
+			ComponentToGrab,												// component to grab
+			NAME_None,														// if its rigged body we name the bone connected, if not we put NAME_None
+			ComponentToGrab->GetOwner()->GetActorLocation(),				// location of actor to grab
+			true															// allow rotation or not while grabbing
+		);
+	}
+
 }
 
 
@@ -48,6 +78,9 @@ void UGrabber::Grab()
 void UGrabber::Release()
 {
 	UE_LOG(LogTemp, Warning, TEXT("Grab key released"));
+
+	/// release the object grabbed
+	PhysicsHandle->ReleaseComponent();
 }
 
 
