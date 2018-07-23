@@ -8,7 +8,7 @@
 #include "Public/DrawDebugHelpers.h"
 #include "PhysicsEngine/PhysicsHandleComponent.h" 
 
-//siempre el ultimo include!
+// Always the last include!!
 #include "Grabber.generated.h"
 
 
@@ -32,15 +32,18 @@ public:
 private:
 	FVector PlayerViewPortLocation;
 	FRotator PlayerViewPortRotation;
-	FVector LineTraceEnd;	
-	float Reach = 100.0f;	// que tan lejos se puede tomar las cosas (largo de manos)
+	float Reach = 100.0f;	// how far we can grab objects
 
 	UPhysicsHandleComponent* PhysicsHandle = nullptr;
 	UInputComponent* InputComponent = nullptr;
 
+	// Get the start point for the trace line (with reach)
+	FVector GetReachLineStart();
+	// Get the end point for the trace line (with reach)
+	FVector GetReachLineEnd();
+
 	// Line traces and grabs what's in reach
 	void Grab();
-
 	// Called on key release
 	void Release();
 
