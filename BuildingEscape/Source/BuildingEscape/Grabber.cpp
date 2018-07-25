@@ -35,6 +35,7 @@ void UGrabber::TickComponent(float DeltaTime, ELevelTick TickType, FActorCompone
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
 
 	/// If we grab something
+	if (!PhysicsHandle) { return; }
 	if (PhysicsHandle->GetGrabbedComponent())
 	{
 		/// We move the grabbed object with the player
@@ -76,6 +77,8 @@ void UGrabber::Grab()
 	auto HitResult = GetFirstPhysicsBodyInReach();
 	auto ComponentToGrab = HitResult.GetComponent();
 
+	if (!PhysicsHandle) { return; }
+
 	// Only if we hit an actor with physics body while pressing the grab key
 	if (HitResult.GetActor())
 	{
@@ -93,6 +96,7 @@ void UGrabber::Grab()
 // Called on key release
 void UGrabber::Release()
 {
+	if (!PhysicsHandle) { return; }
 	PhysicsHandle->ReleaseComponent();
 }
 
@@ -112,6 +116,7 @@ void UGrabber::FindPhysicsHandleComponent()
 // Finds and binds the input component for grabbing
 void UGrabber::SetupInputComponent()
 {
+	
 	InputComponent = GetOwner()->FindComponentByClass<UInputComponent>();
 
 	if (InputComponent)
