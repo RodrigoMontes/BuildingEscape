@@ -24,20 +24,11 @@ void UOpenDoor::BeginPlay()
 	// busca top down el pawn (player), desde el mundo, al controlador, al player
 	//ActorThatOpens = GetWorld()->GetFirstPlayerController()->GetPawn();
 	Owner = GetOwner();
-}
 
-void UOpenDoor::OpenDoor()
-{
-	// cambiar la rotacion para abrir la puerta
-	if (!Owner) { return; }
-	Owner->SetActorRotation(FRotator(0.0f, OpenAngle, 0.0f));
-}
-
-void UOpenDoor::CloseDoor()
-{
-	// cambiar la rotacion para cerrar la puerta
-	if (!Owner) { return; }
-	Owner->SetActorRotation(FRotator(0.0f, 0.0f, 0.0f));
+	if (!PressurePlate) 
+	{ 
+		UE_LOG(LogTemp, Error, TEXT("Pressure Plate missing for %s"), *GetOwner()->GetName());
+	}
 }
 
 
@@ -47,21 +38,18 @@ void UOpenDoor::TickComponent(float DeltaTime, ELevelTick TickType, FActorCompon
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
 
 	/// we check on each tick if volume on trigger volume is higher or equal to the max mass threshold
-	if (TotalMassOfActorsOnPlate() >= PlateMaxMass) 
+	if (GetTotalMassOfActorsOnPlate() >= PlateMaxMass) 
 	{
-		OpenDoor();
-		LastTimeDoorOpen = GetWorld()->GetTimeSeconds();
+		OnOpen.Broadcast();
 	}
-
-	if ((GetWorld()->GetTimeSeconds() - LastTimeDoorOpen) > OpenDoorWaitTime)
+	else
 	{
-		LastTimeDoorOpen = 0;
-		CloseDoor();
+		OnClose.Broadcast();
 	}
-
 }
 
-float UOpenDoor::TotalMassOfActorsOnPlate()
+
+float UOpenDoor::GetTotalMassOfActorsOnPlate()
 {
 	float TotalMass = 0.0f;
 	TArray <AActor*>  OverlappingActors;
@@ -78,4 +66,3 @@ float UOpenDoor::TotalMassOfActorsOnPlate()
 
 	return TotalMass;
 }
-
